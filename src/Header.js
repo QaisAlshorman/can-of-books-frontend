@@ -12,7 +12,7 @@ import { withAuth0 } from '@auth0/auth0-react';
 class Header extends React.Component {
   render() {
     const { isAuthenticated } = this.props.auth0;
-    console.log( { isAuthenticated } );
+    // console.log( { isAuthenticated } );
     return (
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Navbar.Brand>My Favorite Books</Navbar.Brand>
