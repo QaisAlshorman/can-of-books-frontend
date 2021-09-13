@@ -18,7 +18,7 @@ class App extends React.Component {
 
   render() {
 
-    console.log('app', this.props);
+    // console.log('app', this.props);
 
     let authnticated = this.props.auth0.isAuthunticated;
 
