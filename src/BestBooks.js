@@ -5,7 +5,7 @@ import axios from 'axios';
 // import Jumbotron from 'react-bootstrap/Jumbotron';
 import './BestBooks.css';
 import BooksItem from './BooksItem';
-import Carousel from "react-bootstrap/Carousel";
+// import Carousel from "react-bootstrap/Carousel";
 
 class MyFavoriteBooks extends React.Component {
   constructor(props) {
@@ -16,10 +16,51 @@ class MyFavoriteBooks extends React.Component {
   }
 
   componentDidMount = () => {
+    
     const { user } = this.props.auth0;
     const email = user.email;
     axios
-      .get(`http://localhost:3010/Books?email=${email}`)
+      .get(`http://localhost:3010/getBooks?email=${email}`)
+      .then(result => {
+        console.log(result.data);
+        this.setState({
+          favBooksArr: result.data
+        })
+      })
+      .catch(err => {
+        console.log('error');
+      })
+  }
+  deleteBook = (id) => {
+    const { user } = this.props.auth0;
+    let email = user.email;
+    axios
+
+      .delete(`http://localhost:3010/deleteBooks/${id}?email=${email}`)
+      .then(result => {
+        this.setState({
+          favBooksArr: result.data
+        })
+      })
+      .catch(err => {
+        console.log('error');
+
+      })
+  }
+
+  addBooksHandler = (event) => {
+    event.preventDefault();
+    const { user } = this.props.auth0;
+    let email = user.email;
+    const obj = {
+
+      title: event.target.title.value,
+      ownerEmail: email,
+      status: event.target.status.value
+    }
+
+    axios
+      .post(`http://localhost:3010/addBooks`, obj)
       .then(result => {
         this.setState({
           favBooksArr: result.data
@@ -29,39 +70,41 @@ class MyFavoriteBooks extends React.Component {
         console.log('error');
       })
   }
+
   render() {
     return (
-      <><h1>My Favorite Books</h1>
-        <div>
-          {this.state.favBooksArr.map((item, indx) => {
-            return (
-              <>
-                <BooksItem
-                  item={item} />
+      <>
+        <form onSubmit={this.addBooksHandler}>
+          <fieldset>
+            <legend>Add Book</legend>
+            <input type="text" name="title" />
+            <input type="text" name="email" />
 
-                <Carousel fade>
-                <Carousel.Item key={indx} interval={1000}>
-                  
-                  <Carousel.Caption>
-                    <h3>{item.title}</h3>
-                    <p>{item.status}</p>
-                    <h3>{item.desciption}</h3>
-                  </Carousel.Caption>
-                </Carousel.Item>
-                </Carousel>
-              </>
-            );
-          })}
+            <select name="status" id="status">
+              <option value="science">Romance</option>
+              <option value="novels">Action</option>
+              <option value="history">history</option>
+            </select>
 
-        </div>
-        <p> This is a collection of my favorite books</p></>
+            <button type="submit">Add a book</button>
 
+          </fieldset>
+        </form>
 
+        {this.state.favBooksArr.length}
+        {this.state.favBooksArr.map(item => {
+          return (
+            <BooksItem class="books"
+              item={item}
+              deleteBook={this.deleteBook}
 
+            />
+          )
+        })
+        }
+      </>
     )
   }
 }
-
-
 
 export default withAuth0(MyFavoriteBooks);
