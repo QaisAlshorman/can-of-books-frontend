@@ -6,23 +6,29 @@ import axios from 'axios';
 import './BestBooks.css';
 import BooksItem from './BooksItem';
 // import Carousel from "react-bootstrap/Carousel";
+import UpdateForm from './UpdateForm';
 
 class MyFavoriteBooks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       favBooksArr: [],
+      showFlag: false,
+      title: '',
+      desciption: '',
+      status: '',
+      bookId: ''
     }
   }
 
   componentDidMount = () => {
-    
+
     const { user } = this.props.auth0;
     const email = user.email;
     axios
       .get(`http://localhost:3010/getBooks?email=${email}`)
       .then(result => {
-        console.log(result.data);
+        // console.log(result.data);
         this.setState({
           favBooksArr: result.data
         })
@@ -71,6 +77,50 @@ class MyFavoriteBooks extends React.Component {
       })
   }
 
+  handleClose = () => {
+    this.setState({
+      showFlag: false
+    })
+  }
+
+  showUpdateForm = (item) => {
+    this.setState({
+      showFlag: true,
+      title: item.title,
+      desciption: item.desciption,
+      status: item.status,
+      bookId: item._id
+
+    })
+  }
+
+  updateBook = (event) => {
+    event.preventDefault();
+    const { user } = this.props.auth0;
+    const email = user.email;
+    const obj = {
+      title: event.target.title.value,
+      desciption: event.target.desciption.value,
+      status: event.target.status.value,
+      // email: email,
+      bookId: this.state.bookId
+    }
+
+    axios
+      .put(`http://localhost:3010/updateBook/${this.state.bookId}`, obj)
+      .then(result => {
+        this.setState({
+          favBooksArr: result.data,
+          showFlag: false
+        })
+      })
+      .catch(err => {
+        console.log('error in updating the data');
+      })
+  }
+
+
+
   render() {
     return (
       <>
@@ -81,9 +131,9 @@ class MyFavoriteBooks extends React.Component {
             <input type="text" name="email" />
 
             <select name="status" id="status">
-              <option value="science">Romance</option>
-              <option value="novels">Action</option>
-              <option value="history">history</option>
+              <option value="Adventurs">Adventure</option>
+              <option value="Action">Action</option>
+              <option value="tail">tail</option>
             </select>
 
             <button type="submit">Add a book</button>
@@ -98,10 +148,20 @@ class MyFavoriteBooks extends React.Component {
               item={item}
               deleteBook={this.deleteBook}
 
+              showUpdateForm={this.showUpdateForm}
             />
           )
         })
         }
+
+        <UpdateForm
+          handleClose={this.handleClose}
+          show={this.state.showFlag}
+          title={this.state.title}
+          status={this.state.status}
+          desciption={this.state.desciption}
+          updateBook={this.updateBook}
+        />
       </>
     )
   }
