@@ -61,6 +61,7 @@ class MyFavoriteBooks extends React.Component {
     const obj = {
 
       title: event.target.title.value,
+      desciption :event.target.desciption.value,
       ownerEmail: email,
       status: event.target.status.value
     }
@@ -128,7 +129,7 @@ class MyFavoriteBooks extends React.Component {
           <fieldset>
             <legend>Add Book</legend>
             <input type="text" name="title" />
-            <input type="text" name="email" />
+            <input type="text" name="desciption" />
 
             <select name="status" id="status">
               <option value="Adventurs">Adventure</option>
