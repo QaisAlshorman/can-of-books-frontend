@@ -67,7 +67,8 @@ class MyFavoriteBooks extends React.Component {
     }
 
     axios
-      .post(`http://localhost:3010/addBooks`, obj)
+      // .post(`http://localhost:3010/addBooks`, obj)
+      .post(`https://https://app-qais.herokuapp.com/addBooks`,obj)
       .then(result => {
         this.setState({
           favBooksArr: result.data
@@ -98,7 +99,7 @@ class MyFavoriteBooks extends React.Component {
   updateBook = (event) => {
     event.preventDefault();
     const { user } = this.props.auth0;
-    const email = user.email;
+    const ownerEmail = user.email;
     const obj = {
       title: event.target.title.value,
       desciption: event.target.desciption.value,
@@ -108,7 +109,8 @@ class MyFavoriteBooks extends React.Component {
     }
 
     axios
-      .put(`http://localhost:3010/updateBook/${this.state.bookId}`, obj)
+      // .put(`http://localhost:3010/updateBook/${this.state.bookId}`, obj)
+      .post(`https://app-qais.herokuapp.com/updateBook/${this.state.bookId}`,obj)
       .then(result => {
         this.setState({
           favBooksArr: result.data,
